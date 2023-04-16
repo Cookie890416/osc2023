@@ -1,0 +1,5 @@
+{
+    "files.associations": {
+        "rpi_irq.h": "c"
+    }
+}
