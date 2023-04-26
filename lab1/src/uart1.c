@@ -38,14 +38,16 @@ void uart_init()
 char uart_recv() {
     char r;
     while(!(*AUX_MU_LSR_REG & 0x01)){};
-    //AUX_MU_LSR_REG,Bit zero, if set to 1, indicates that the data is ready; this means that we can read from the UART.
+    //AUX_MU_LSR_REG,Bit zero, if set to 1, indicates that the data is ready;
+    //this means that we can read from the UART.
     r = (char)(*AUX_MU_IO_REG);
     return r=='\r'?'\n':r;
 }
 
 void uart_send(unsigned int c) {
     while(!(*AUX_MU_LSR_REG & 0x20)){};
-    // Bit five, if set to 1, tells us that the transmitter is empty, meaning that we can write to the UART.
+    // Bit five, if set to 1, tells us that the transmitter is empty
+    //meaning that we can write to the UART.
     *AUX_MU_IO_REG = c;
 }
 
