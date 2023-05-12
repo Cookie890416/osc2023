@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "rpi_irq.h": "c"
+        "rpi_irq.h": "c",
+        "exception.h": "c"
     }
 }

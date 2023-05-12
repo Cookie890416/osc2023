@@ -129,7 +129,6 @@ void dtb_callback_initramfs(uint32_t node_type, char *name, void *value, uint32_
 void dtb_find_and_store_reserved_memory()
 {
     struct fdt_header *header = (struct fdt_header *) dtb_ptr;
-    // header->magic is big endian, it needs to transfer to little endian to compare 0xD00DFEED  
     if (uint32_endian_big2lttle(header->magic) != 0xD00DFEED)
     {
         uart_puts("traverse_device_tree : wrong magic in traverse_device_tree");
@@ -150,5 +149,5 @@ void dtb_find_and_store_reserved_memory()
     }
 
     // reserve device tree itself
-    memory_reserve((unsigned long long)dtb_ptr, (unsigned long long)dtb_ptr + uint32_endian_big2lttle(header->totalsize));//header->totalsize is devicetree size
+    memory_reserve((unsigned long long)dtb_ptr, (unsigned long long)dtb_ptr + uint32_endian_big2lttle(header->totalsize));
 }
