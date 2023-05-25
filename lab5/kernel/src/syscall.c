@@ -63,6 +63,7 @@ int exec(trapframe_t *tpf, const char *name, char *const argv[])
         curr_thread->signal_handler[i] = signal_default_handler;
     }
 
+    // Set the ELR_EL1 register to the starting address of the new program image.
     tpf->elr_el1 = (unsigned long)curr_thread->data;
     tpf->sp_el0 = (unsigned long)curr_thread->stack_alloced_ptr + USTACK_SIZE;
     tpf->x0 = 0;
@@ -129,18 +130,26 @@ void exit(trapframe_t *tpf, int status)
 int syscall_mbox_call(trapframe_t *tpf, unsigned char ch, unsigned int *mbox)
 {
     lock();
+    // Add channel to lower 4 bit
     unsigned long r = (((unsigned long)((unsigned long)mbox) & ~0xF) | (ch & 0xF));
+    
+    //if MBOX_STATUS is not full, it will jump while
     do
     {
         asm volatile("nop");
     } while (*MBOX_STATUS & BCM_ARM_VC_MS_FULL);
+
+    // Write to Register
     *MBOX_WRITE = r;
     while (1)
     {
+        //if MBOX_STATUS is empty, it will loop while 
         do
         {
             asm volatile("nop");
         } while (*MBOX_STATUS & BCM_ARM_VC_MS_EMPTY);
+
+        // Read from Register
         if (r == *MBOX_READ)
         {
             tpf->x0 = (mbox[1] == MBOX_REQUEST_SUCCEED);
