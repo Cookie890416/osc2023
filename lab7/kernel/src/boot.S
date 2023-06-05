@@ -10,7 +10,7 @@ _start:
 
 set_mmu_configuration:
     // set paging configuration (up : 0xffff000000000000 low : 0x0000000000000000)
-    ldr x4, = TCR_CONFIG_DEFAULT 
+    ldr x4, = TCR_CONFIG_DEFAULT
     msr tcr_el1, x4
 
     // Set Used Memory Attributes
