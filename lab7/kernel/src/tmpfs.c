@@ -22,6 +22,8 @@ int tmpfs_setup_mount(struct filesystem *fs, struct mount *_mount)
     return 0;
 }
 
+// mount : root or fs
+// fsnode_type : dir_t or file_t
 struct vnode* tmpfs_create_vnode(struct mount* _mount, enum fsnode_type type)
 {
     struct vnode *v = kmalloc(sizeof(struct vnode));

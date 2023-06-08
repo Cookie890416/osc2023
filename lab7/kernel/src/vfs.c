@@ -231,6 +231,10 @@ int vfs_lookup(const char *pathname, struct vnode **target)
     return 0;
 }
 
+//  A user can use the device id to create a device file in a file system.
+//  After the device file created, the VFS uses the device id to find the device driver. 
+//  Next, the driver initializes the file with its method. Then, the user can read/write the file to access the device.
+
 // for device operations only
 int vfs_mknod(char* pathname, int id)
 {
@@ -289,45 +293,49 @@ void vfs_test()
 char *get_absolute_path(char *path, char *curr_working_dir)
 {
     // if relative path -> add root path
-    if(path[0] != '/')
+    if (path[0] != '/')
     {
         char tmp[MAX_PATH_NAME];
         strcpy(tmp, curr_working_dir);
-        if(strcmp(curr_working_dir,"/")!=0)strcat(tmp, "/");
+        if (strcmp(curr_working_dir, "/") != 0)
+            strcat(tmp, "/");
         strcat(tmp, path);
         strcpy(path, tmp);
     }
 
-    char absolute_path[MAX_PATH_NAME+1] = {};
-    int idx = 0;
+    char absolute_path[MAX_PATH_NAME + 1] = {};  // Variable to store the absolute path
+    int idx = 0;  // Current index position in the absolute path string
     for (int i = 0; i < strlen(path); i++)
     {
         // meet /..
-        if (path[i] == '/' && path[i+1] == '.' && path[i+2] == '.')
+        if (path[i] == '/' && path[i + 1] == '.' && path[i + 2] == '.')
         {
-            for (int j = idx; j >= 0;j--)
+            // Starting from the last slash in the absolute path string, go backward until the next slash is found,
+            // indicating going up one directory level
+            for (int j = idx; j >= 0; j--)
             {
-                if(absolute_path[j] == '/')
+                if (absolute_path[j] == '/')
                 {
-                    absolute_path[j] = 0;
-                    idx = j;
+                    absolute_path[j] = 0;  // Remove the last slash and everything after it, indicating going up one directory level
+                    idx = j;  // Update the index position in the absolute path string
                 }
             }
-            i += 2;
+            i += 2;  // Skip the characters "/.." (two characters)
             continue;
         }
 
         // ignore /.
-        if (path[i] == '/' && path[i+1] == '.')
+        if (path[i] == '/' && path[i + 1] == '.')
         {
-            i++;
+            i++;  // Skip the character "/." (one character)
             continue;
         }
 
-        absolute_path[idx++] = path[i];
+        absolute_path[idx++] = path[i];  // Copy the non-special characters to the absolute path string
     }
-    absolute_path[idx] = 0;
+    absolute_path[idx] = 0;  // Ensure the absolute path string is null-terminated
 
-    return strcpy(path, absolute_path);
+    return strcpy(path, absolute_path);  // Copy the absolute path string back to the original input variable path
 }
+
 
