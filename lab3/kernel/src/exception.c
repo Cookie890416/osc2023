@@ -78,10 +78,10 @@ void el0_irq_64_router(){
     }
     else if(*CORE0_INTERRUPT_SOURCE & INTERRUPT_SOURCE_CNTPNSIRQ)  //from CNTPNS (core_timer) // A1 - setTimeout run in el1
     {
-        core_timer_disable();// open timer counter
+        core_timer_disable();// close timer counter
         irqtask_add(core_timer_handler, TIMER_IRQ_PRIORITY);
         irqtask_run_preemptive();
-        core_timer_enable();// close timer counter
+        core_timer_enable();// open timer counter
     }
 }
 
